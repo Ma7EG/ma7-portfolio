@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { INITIAL_QUESTS, INITIAL_STATS } from "./utils/gameData";
+import { INITIAL_QUESTS, INITIAL_STATS, GAME_PROJECTS } from "./utils/gameData";
 import { Quest, CharacterStats } from "./types";
 export default function App() {
   const [score, setScore] = useState(999900);
@@ -14,15 +14,18 @@ export default function App() {
         <h1 className="font-press-start text-xs md:text-sm tracking-tight text-white select-none">MAHMOUD ALI</h1>
       </header>
       <main className="max-w-6xl mx-auto px-6 pt-6">
-        <div className="bg-white pixel-border pixel-shadow p-4 mb-8">
-          <h3 className="font-press-start text-[11px] md:text-xs">ACTIVE HERO QUEST LOG</h3>
-          <p className="font-press-start text-[10px] bg-black text-white px-2 py-1 inline-block mt-2">SCORE: {score}</p>
-        </div>
-        <section className="py-16 px-6 bg-[#f3f3f3]" id="about">
-          <h4 className="font-press-start text-[9px] font-bold">ATTRIBUTES (SP: {skillPoints})</h4>
-          <div className="space-y-4 mt-4">
-            <div>C# & .NET Core Magic: {stats.codeQuality}</div>
-            <div>SQL Server & DB Design: {stats.aiSorcery}</div>
+        <section className="py-16 px-6" id="work">
+          <h2 className="font-press-start text-xs md:text-sm text-black">LEVEL 2: EXPERIENCE</h2>
+        </section>
+        <section className="py-16 px-6 bg-[#dae5f9]" id="projects">
+          <h2 className="font-press-start text-xs md:text-sm text-black">LEVEL 3: PROJECTS</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+            {GAME_PROJECTS.map((project) => (
+              <div key={project.id} className="bg-white p-6 border-4 border-black">
+                <h3 className="font-press-start text-xs">{project.title}</h3>
+                <p className="text-xs mt-2">{project.description}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>
