@@ -75,7 +75,7 @@ export default async function handler(req: any, res: any) {
       model: "openai"
     };
 
-    const response = await fetch("https://text.pollinations.ai/", {
+    const response = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -87,8 +87,9 @@ export default async function handler(req: any, res: any) {
       throw new Error("API request failed");
     }
 
-    const reply = await response.text();
-    return res.status(200).json({ reply: reply || "..." });
+    const data = await response.json();
+    const reply = data.choices?.[0]?.message?.content || "...";
+    return res.status(200).json({ reply });
   } catch (err: any) {
     console.error(err);
     return res.status(200).json({

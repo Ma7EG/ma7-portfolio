@@ -318,31 +318,32 @@ export default function App() {
         model: "openai"
       };
 
-      const response = await fetch("https://text.pollinations.ai/", {
+      const response = await fetch("https://gen.pollinations.ai/v1/chat/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       });
-      
+
       if (!response.ok) {
-        throw new Error("API request failed");
+        throw new Error(`API returned ${response.status}`);
       }
 
-      const reply = await response.text();
-      
+      const data = await response.json();
+      const reply = data.choices?.[0]?.message?.content || "...";
+
       const modelMsg: ChatMessage = {
         id: `model-${Date.now()}`,
         role: "model",
-        content: reply || "...",
+        content: reply,
         timestamp: new Date().toLocaleTimeString()
       };
       setMessages(prev => [...prev, modelMsg]);
       completeQuest("chat");
-    } catch (err) {
+    } catch (err: any) {
       const errorMsg: ChatMessage = {
         id: `error-${Date.now()}`,
         role: "model",
-        content: "Connection to the AI Realm interrupted. Please check your internet connection.",
+        content: "Communication node lost power. Please try again later.",
         timestamp: new Date().toLocaleTimeString()
       };
       setMessages(prev => [...prev, errorMsg]);
