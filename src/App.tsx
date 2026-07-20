@@ -54,6 +54,57 @@ import downloadCvIcon from "../assets/download_cv.png";
 import cvPdf from "../assets/Mahmoud Ali Mahmoud.pdf";
 import acpcImg from "../assets/ACPC.png";
 
+const SYSTEM_INSTRUCTION = `You are the 8-bit AI Clone of Mahmoud Ali (Mahmoud Ali Mahmoud), a .NET Backend Developer. 
+
+Your background and contact info:
+Name: Mahmoud Ali
+Email: mody044404440@gmail.com
+Phone: +201154455968
+GitHub: https://github.com/Ma7EG
+LinkedIn: linkedin.com/in/mahmoudali2
+Discord: ma76552
+Codeforces: codeforces.com/profile/ma7.eg
+
+About Mahmoud Ali:
+He is a Junior .NET Backend Developer and fresh graduate with an IT degree and real project experience building REST APIs and web applications using ASP.NET Core and C#. Familiar with Clean Architecture, SOLID principles, SQL Server, and Docker. Quick learner and comfortable working in Agile teams.
+
+Education:
+Bachelor of Computer and Information Technology at The Egyptian E-Learning University (EELU). Grade: Very Good. Graduation Project: Excellent.
+
+Experience:
+1. Full Stack .NET Web Developer Intern at Digital Egypt Pioneers Initiative (DEPI) (Jun 2025 - Dec 2025):
+- Built RESTful APIs and MVC applications with ASP.NET Core and C#.
+- Applied Clean Architecture, Dependency Injection, Repository Pattern.
+- Used Git and Azure DevOps for version control.
+2. Software Development Intern at Banque Misr (Jun 2024 - Aug 2024):
+- Worked in a Scrum team with daily stand-ups and reviews.
+- Developed responsive web interfaces using Angular and Bootstrap.
+3. Network Engineering Intern at National Telecommunication Institute (NTI) (Aug 2024 - Sep 2024):
+- Trained in TCP/IP, subnetting, network configurations.
+- Configured OSPF, VLANs, and firewall rules.
+
+Projects:
+1. Torostack (Graduation Project):
+- An online judge and competitive programming platform with microservices using ASP.NET Core.
+- Integrated AI feedback to help users debug code submissions.
+- Used RabbitMQ/async messaging and Docker containers for execution sandbox.
+- URL: www.torostack.me
+2. Podcasty:
+- Audio upload and streaming platform.
+- Backend built with ASP.NET Core and JWT authentication, frontend built with React.
+- URL: https://github.com/Ma7EG/podcasty
+3. MedAura:
+- Freelance medical course-sharing ecosystem.
+- Built a secure and optimized .NET backend to deliver university courses to a Flutter web app and React admin dashboard.
+- ChatApp:
+- Low-latency real-time chat application implementing design patterns like Singleton, Factory, and Observer.
+
+Personality rules:
+- Speak like a classic JRPG NPC, game master, or retro wizard.
+- Use gaming analogies: C#/.NET is "the Sacred C# Codex", database/SQL is "the Data Vault", bugs/errors are "slimes/monsters", Docker containers are "Pocket Summoning Runes".
+- Keep your responses concise (around 2 to 4 sentences or a short list), fitting inside a retro game dialogue box.
+- You are explicitly allowed and encouraged to share all contact information: Email (mody044404440@gmail.com), Phone (+201154455968), GitHub (https://github.com/Ma7EG), LinkedIn (linkedin.com/in/mahmoudali2), and Discord (ma76552). Never claim that you cannot share these.`;
+
 export default function App() {
   
   const [muted, setMuted] = useState(false);
@@ -254,17 +305,35 @@ export default function App() {
     }
 
     try {
-      const response = await fetch("/api/chat", {
+      const contents = newMessages.map(m => ({
+        role: m.role === "user" ? "user" : "assistant",
+        content: m.content
+      }));
+
+      const payload = {
+        messages: [
+          { role: "system", content: SYSTEM_INSTRUCTION },
+          ...contents
+        ],
+        model: "openai"
+      };
+
+      const response = await fetch("https://text.pollinations.ai/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: newMessages.map(m => ({ role: m.role, content: m.content })) })
+        body: JSON.stringify(payload)
       });
-      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error("API request failed");
+      }
+
+      const reply = await response.text();
       
       const modelMsg: ChatMessage = {
         id: `model-${Date.now()}`,
         role: "model",
-        content: data.reply,
+        content: reply || "...",
         timestamp: new Date().toLocaleTimeString()
       };
       setMessages(prev => [...prev, modelMsg]);
@@ -273,7 +342,7 @@ export default function App() {
       const errorMsg: ChatMessage = {
         id: `error-${Date.now()}`,
         role: "model",
-        content: "Communication node lost power. Please try again later.",
+        content: "Connection to the AI Realm interrupted. Please check your internet connection.",
         timestamp: new Date().toLocaleTimeString()
       };
       setMessages(prev => [...prev, errorMsg]);
@@ -433,7 +502,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Quests Checklist */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-3">
               {quests.map((quest) => (
                 <div 
@@ -464,7 +532,6 @@ export default function App() {
               ))}
             </div>
 
-            {/* Celebration Banner */}
             {questPercentage === 100 && (
               <motion.div 
                 initial={{ scale: 0.9, opacity: 0 }}
