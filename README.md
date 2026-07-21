@@ -20,7 +20,6 @@ An interactive 8-bit JRPG-style portfolio for Mahmoud Ali, a Junior .NET Backend
 ## Technologies Used
 
 * **Frontend:** React, Tailwind CSS, Lucide icons, Motion
-* **Backend:** Node.js, Express (proxying the AI Chat requests)
 * **Audio:** Web Audio API (real-time synthesis)
 
 ## Running Locally
